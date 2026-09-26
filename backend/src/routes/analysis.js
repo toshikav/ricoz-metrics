@@ -1,0 +1,13 @@
+import { Router } from 'express';
+import * as c from '../controllers/analysisController.js';
+import { objectId } from '../validation.js';
+const router = Router();
+router.param('id', objectId);
+router.post('/validate-sql', c.validateSQLEndpoint);
+router.post('/compare-sql', c.compareSQLQueries);
+router.post('/validate-metric', c.validateMetricEndpoint);
+router.get('/breaking-changes', c.getAllBreakingChanges);
+router.get('/metrics/:id/dependencies', c.getMetricDependencies);
+router.get('/metrics/:id/impact', c.getMetricImpact);
+router.get('/metrics/:id/circular-check', c.checkCircularDependencies);
+export default router;

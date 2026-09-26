@@ -1,0 +1,29 @@
+{
+  "name": "ricoz-metrics-backend",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Metric catalogue and governance API",
+  "type": "module",
+  "author": "RicozMetrics",
+  "license": "ISC",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test --test-concurrency=1 test/*.test.js",
+    "audit:verify": "node scripts/verify-audit.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
+    "express-rate-limit": "^8.1.0",
+    "helmet": "^8.1.0",
+    "mongoose": "^8.19.0",
+    "node-sql-parser": "^5.3.13",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "mongodb-memory-server": "^10.2.3",
+    "supertest": "^7.1.4"
+  }
+}

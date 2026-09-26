@@ -1,0 +1,11 @@
+import { Router } from 'express';
+import * as c from '../controllers/metricController.js';
+import { objectId } from '../validation.js';
+const router = Router();
+router.param('id', objectId);
+router.get('/summary', c.getSummary);
+router.route('/').get(c.getAllMetrics).post(c.createMetric);
+router.route('/:id').get(c.getMetricById).put(c.updateMetric).delete(c.deleteMetric);
+router.get('/:id/versions', c.getMetricVersions);
+router.get('/:id/audit', c.getMetricAuditLogs);
+export default router;
