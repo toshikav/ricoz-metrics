@@ -20,8 +20,9 @@ try {
   };
   process.on('SIGTERM', shutdown);
   process.on('SIGINT', shutdown);
-} catch (error) {
+}} catch (error) {
   console.error('Startup failed. Check MongoDB connectivity and replica-set configuration.');
+  console.error(error);
   await mongoose.disconnect();
   process.exitCode = 1;
 }
