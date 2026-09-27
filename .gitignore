@@ -10,3 +10,5 @@ test-results/
 .DS_Store
 work/
 *.tsbuildinfo
+
+ricoz_metrics_backup.archive.gz
