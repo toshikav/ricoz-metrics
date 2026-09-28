@@ -61,14 +61,15 @@
 @layer base {
   :root {
     font-family: Manrope, Arial, sans-serif;
-    color: #22334b;
-    background: #f5f7fa;
+    color: #151c29;
+    background: #f8f9fb;
     font-synthesis: none;
-    --navy: #182a40;
-    --ink: #22334b;
-    --muted: #5e6e83;
-    --line: #e5eaf1;
-    --blue: #2167de;
+    --surface: #f8f9fb;
+    --accent-soft: #fcf0f0;
+    --ink: #151c29;
+    --muted: #586273;
+    --line: #e2e5eb;
+    --accent: #b91c24;
     --panel: #fff;
     --green: #1c8061;
     --amber: #95620e;
@@ -117,20 +118,20 @@
   a:focus-visible,
   button:focus-visible,
   summary:focus-visible {
-    outline: 3px solid #65b7ff;
+    outline: 3px solid #b91c24;
     outline-offset: 4px;
   }
   input:focus,
   select:focus,
   textarea:focus {
-    outline: 2px solid #a9cbff;
-    border-color: var(--blue);
+    outline: 2px solid #e7a4a8;
+    border-color: var(--accent);
   }
   input,
   select,
   textarea {
     width: 100%;
-    border: 1px solid #dce3ec;
+    border: 1px solid #e2e5eb;
     border-radius: 6px;
     background: white;
     padding: 10px 12px;
@@ -139,7 +140,7 @@
   }
   input::placeholder,
   textarea::placeholder {
-    color: #5e6e83;
+    color: #586273;
   }
   textarea {
     resize: vertical;
@@ -169,7 +170,7 @@
     cursor: pointer;
   }
   ::selection {
-    background: #d8e9ff;
+    background: #f9dfe1;
   }
 }
 @layer components {
@@ -181,8 +182,9 @@
     position: fixed;
     inset: 0 auto 0 0;
     width: 242px;
-    background: var(--navy);
-    color: #abb9cb;
+    background: #fff;
+    border-right: 1px solid var(--line);
+    color: #586273;
     padding: 30px 18px 18px;
     display: flex;
     flex-direction: column;
@@ -192,57 +194,67 @@
     display: flex;
     gap: 10px;
     align-items: center;
-    color: white;
+    color: var(--ink);
     font-size: 20px;
     letter-spacing: -0.8px;
     font-weight: 800;
     padding: 0 6px;
   }
   .brand-mark {
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: 22px;
+    letter-spacing: -3px;
+    padding-right: 3px;
     display: grid;
     place-items: center;
-    background: #2675e7;
+    background: #b91c24;
     width: 38px;
-    height: 40px;
+    height: 39px;
     border-radius: 10px;
     color: white;
   }
   .brand-light {
-    font-weight: 400;
-    color: #d7e4f6;
+    font-weight: 500;
+    color: #151c29;
   }
   .brand small {
     display: block;
     font-size: 8px;
     letter-spacing: 2px;
-    color: #8cabc8;
+    color: #586273;
     margin-top: 2px;
   }
   .workspace {
     display: flex;
     gap: 10px;
     align-items: center;
-    border: 1px solid #34465c;
+    border: 1px solid #e2e5eb;
     border-radius: 7px;
     padding: 13px 11px;
     margin-top: 37px;
     font-size: 12px;
-    color: #e2e9f3;
+    color: #151c29;
+  }
+  .workspace:hover {
+    background: var(--accent-soft);
+    border-color: var(--accent);
   }
   .workspace-avatar {
+    color: var(--accent);
     display: grid;
     place-items: center;
     width: 29px;
     height: 29px;
-    background: #31455f;
-    border: 1px solid #49617d;
+    background: #fcf0f0;
+    border: 1px solid #f0d8db;
     border-radius: 6px;
     font-size: 13px;
   }
   .workspace small {
     display: block;
     font-size: 11px;
-    color: #97a8bd;
+    color: #586273;
   }
   .workspace > svg {
     margin-left: auto;
@@ -252,7 +264,7 @@
     letter-spacing: 1.8px;
     font-weight: 700;
     margin: 28px 13px 12px;
-    color: #89a3c0;
+    color: #586273;
   }
   .sidebar nav {
     display: flex;
@@ -272,56 +284,56 @@
       color 0.15s;
   }
   .sidebar nav a:hover {
-    background: #243b55;
-    color: white;
+    background: #f8f9fb;
+    color: var(--ink);
   }
   .sidebar nav a.active {
-    background: #2b4362;
-    color: white;
-    box-shadow: inset 3px 0 #78b5ff;
+    background: #fcf0f0;
+    color: var(--accent);
+    box-shadow: inset 3px 0 #b91c24;
   }
   .sidebar nav a.active svg {
-    color: #8ebdff;
+    color: #b91c24;
   }
   .sidebar-note {
     margin-top: auto;
     padding: 60px 13px 25px;
   }
   .sidebar-note svg {
-    color: #7294b7;
+    color: #b91c24;
     margin-bottom: 13px;
   }
   .sidebar-note strong {
     display: block;
     font-size: 13px;
     line-height: 1.7;
-    color: #d7e2f0;
+    color: #151c29;
     font-weight: 500;
   }
   .sidebar-note p {
     font-size: 12px;
     line-height: 1.8;
-    color: #8fa3bc;
+    color: #586273;
     margin-top: 9px;
   }
   .sidebar-footer {
     padding: 20px 6px 0;
-    border-top: 1px solid #2f425b;
+    border-top: 1px solid #e2e5eb;
     display: flex;
     align-items: center;
     gap: 10px;
     font-size: 11px;
-    color: #e4ebf5;
+    color: #151c29;
   }
   .sidebar-footer small {
     display: block;
     font-size: 10px;
-    color: #8fa3bc;
+    color: #586273;
     margin-top: 3px;
   }
   .sidebar-footer > svg {
     margin-left: auto;
-    color: #7f9cba;
+    color: #586273;
   }
   .status-dot {
     display: inline-block;
@@ -354,10 +366,10 @@
     display: flex;
     gap: 12px;
     align-items: center;
-    color: #5e6e83;
+    color: #586273;
   }
   .breadcrumb strong {
-    color: #43536a;
+    color: #151c29;
     font-weight: 600;
   }
   .workspace-label {
@@ -377,7 +389,7 @@
     justify-content: space-between;
     padding: 20px 40px;
     font-size: 11px;
-    color: #5e6e83;
+    color: #586273;
   }
   .page-heading {
     display: flex;
@@ -387,10 +399,11 @@
     margin-bottom: 29px;
   }
   .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
     letter-spacing: 1.7px;
     font-weight: 800;
-    color: #5e6e83;
+    color: var(--accent);
     margin-bottom: 11px;
   }
   .page-heading p {
@@ -416,20 +429,20 @@
       box-shadow 0.15s;
   }
   .button.primary {
-    background: var(--blue);
+    background: var(--accent);
     color: #fff;
-    box-shadow: 0 2px 3px #153f8420;
+    box-shadow: 0 2px 3px #b91c2410;
   }
   .button.primary:hover {
-    background: #1759c6;
+    background: #95151c;
   }
   .button.secondary {
     background: white;
-    border-color: #dbe3ed;
-    color: #40546d;
+    border-color: #e2e5eb;
+    color: #151c29;
   }
   .button.secondary:hover {
-    background: #f3f7fd;
+    background: #f8f9fb;
   }
   .button.destructive {
     background: #b83b47;
@@ -442,12 +455,12 @@
     min-width: 31px;
     min-height: 32px;
     background: transparent;
-    color: #5e6e83;
+    color: #586273;
     border-radius: 5px;
   }
   .icon-button:hover {
-    background: #edf3fb;
-    color: var(--blue);
+    background: #fcf0f0;
+    color: var(--accent);
   }
   .icon-button.danger {
     color: #ad4450;
@@ -461,7 +474,7 @@
     align-items: center;
     gap: 6px;
     font-size: 12px;
-    color: var(--blue);
+    color: var(--accent);
     font-weight: 700;
     background: none;
     padding: 0;
@@ -477,7 +490,7 @@
     white-space: nowrap;
   }
   .blue {
-    color: var(--blue);
+    color: var(--accent);
   }
   .green {
     color: var(--green);
@@ -507,7 +520,7 @@
     gap: 8px;
     font-size: 12px;
     font-weight: 600;
-    color: #63748a;
+    color: #586273;
   }
   .stat > strong {
     display: block;
@@ -519,7 +532,7 @@
   }
   .stat > small {
     font-size: 11px;
-    color: #5e6e83;
+    color: #586273;
   }
   .panel {
     background: var(--panel);
@@ -606,7 +619,7 @@
   .lifecycle-step strong small {
     font-size: 11px;
     font-weight: 500;
-    color: #5e6e83;
+    color: #586273;
   }
   .stage-track {
     height: 4px;
@@ -629,7 +642,7 @@
     background: #cd7d5b;
   }
   .lifecycle-step:hover {
-    background: #fafcff;
+    background: #f8f9fb;
   }
   .dashboard-columns {
     display: grid;
@@ -644,8 +657,8 @@
     text-align: left;
   }
   th {
-    background: #fafbfd;
-    color: #5e6e83;
+    background: #f8f9fb;
+    color: #586273;
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.5px;
@@ -667,15 +680,15 @@
     border-bottom: 0;
   }
   tbody tr:hover {
-    background: #fbfcff;
+    background: #f8f9fb;
   }
   .metric-title {
     font-size: 13px;
     font-weight: 700;
-    color: #334d6d;
+    color: #151c29;
   }
   .metric-title:hover {
-    color: var(--blue);
+    color: var(--accent);
     text-decoration: underline;
   }
   .metric-title + .small {
@@ -684,7 +697,7 @@
   }
   .type-label {
     font-size: 11px;
-    color: #5e6e83;
+    color: #586273;
   }
   .badge {
     display: inline-flex;
@@ -728,7 +741,7 @@
   }
   .badge.archived {
     background: #f0f1f5;
-    color: #5e6e83;
+    color: #586273;
   }
   .domain-list {
     padding: 0 21px 15px;
@@ -744,9 +757,9 @@
     height: 33px;
     display: grid;
     place-items: center;
-    background: #eef4fc;
+    background: #fcf0f0;
     border-radius: 7px;
-    color: #6289b8;
+    color: #b91c24;
     font-size: 13px;
   }
   .domain-list > a > span:nth-child(2) {
@@ -757,7 +770,7 @@
   }
   .domain-list b {
     font-size: 12px;
-    color: #5e6e83;
+    color: #586273;
   }
   .domain-track {
     display: block;
@@ -770,7 +783,7 @@
   .domain-track i {
     display: block;
     height: 100%;
-    background: #8fb4e5;
+    background: #b91c24;
   }
   .panel-footnote {
     padding: 14px 20px;
@@ -778,7 +791,7 @@
     display: flex;
     align-items: center;
     gap: 7px;
-    color: #5e6e83;
+    color: #586273;
     font-size: 10px;
   }
   .change-row {
@@ -808,7 +821,7 @@
     border-radius: 7px;
   }
   .change-row:hover {
-    background: #fcfdff;
+    background: #f8f9fb;
   }
   .quiet-state {
     display: flex;
@@ -818,7 +831,7 @@
   }
   .quiet-state strong {
     font-size: 13px;
-    color: #4a627b;
+    color: #151c29;
   }
   .quiet-state p {
     font-size: 12px;
@@ -829,7 +842,7 @@
     align-items: center;
     flex-wrap: wrap;
     gap: 16px;
-    color: #5e6e83;
+    color: #586273;
     font-size: 11px;
     padding: 0 4px;
   }
@@ -852,8 +865,8 @@
     height: 54px;
     margin: 0 auto 15px;
     border-radius: 13px;
-    background: #f1f6fc;
-    color: #5e6e83;
+    background: #f8f9fb;
+    color: #586273;
   }
   .empty p {
     max-width: 410px;
@@ -871,7 +884,7 @@
     align-items: center;
     gap: 11px;
     padding: 80px 20px;
-    color: #5e6e83;
+    color: #586273;
     font-size: 13px;
   }
   .spin {
@@ -885,14 +898,14 @@
   .notice {
     display: flex;
     gap: 10px;
-    border: 1px solid #d7e4f4;
+    border: 1px solid #e2e5eb;
     border-radius: 6px;
     padding: 15px 17px;
     margin: 0 0 22px;
     font-size: 13px;
     align-items: flex-start;
-    background: #f0f6ff;
-    color: #426080;
+    background: #f8f9fb;
+    color: #586273;
   }
   .notice p {
     font-size: 12px;
@@ -918,17 +931,17 @@
     font-size: 12px;
   }
   .json summary {
-    color: #47729d;
+    color: #b91c24;
     font-weight: 600;
   }
   .json pre {
     max-height: 450px;
     overflow: auto;
-    background: #f5f7fa;
+    background: #f8f9fb;
     border-radius: 5px;
     padding: 15px;
     font-size: 12px;
-    color: #4d5f76;
+    color: #586273;
   }
   .catalogue-toolbar {
     display: flex;
@@ -944,7 +957,7 @@
     gap: 10px;
     flex: 1;
     max-width: 540px;
-    background: #f8fafd;
+    background: #f8f9fb;
     border: 1px solid var(--line);
     border-radius: 6px;
     padding: 0 9px 0 13px;
@@ -958,8 +971,8 @@
     font-size: 13px;
   }
   .search-submit {
-    background: #e9eff8;
-    color: #567196;
+    background: #fcf0f0;
+    color: #b91c24;
     font-size: 11px;
     border-radius: 4px;
     padding: 5px 9px;
@@ -981,7 +994,7 @@
     max-width: 210px;
     flex: 1;
     font-size: 11px;
-    color: #5e6e83;
+    color: #586273;
   }
   .filters input,
   .filters select {
@@ -999,7 +1012,7 @@
     padding: 17px 23px;
     border-top: 1px solid var(--line);
     font-size: 12px;
-    color: #5e6e83;
+    color: #586273;
   }
   .pager > div {
     display: flex;
@@ -1022,13 +1035,13 @@
     padding: 17px 0;
     background: none;
     font-size: 13px;
-    color: #5e6e83;
+    color: #586273;
     border-bottom: 2px solid transparent;
     white-space: nowrap;
   }
   .tab-bar button.active {
-    color: var(--blue);
-    border-color: var(--blue);
+    color: var(--accent);
+    border-color: var(--accent);
     font-weight: 700;
   }
   .tab-bar.standalone {
@@ -1047,9 +1060,9 @@
     font-size: 13px;
     line-height: 1.9;
     min-height: 230px;
-    background: #f8faff;
-    border-color: #dae5f2;
-    color: #345271;
+    background: #f8f9fb;
+    border-color: #e2e5eb;
+    color: #151c29;
     tab-size: 2;
   }
   .form-actions {
@@ -1097,19 +1110,19 @@
   .tags > span,
   .code-chip {
     display: inline-block;
-    background: #f0f4f9;
+    background: #f8f9fb;
     border: 1px solid #e4ebf3;
     padding: 3px 7px;
     border-radius: 4px;
     font-size: 11px;
-    color: #5e6e83;
+    color: #586273;
   }
   .back-link {
     display: inline-flex;
     align-items: center;
     gap: 7px;
     font-size: 12px;
-    color: #5e6e83;
+    color: #586273;
     margin-bottom: 21px;
   }
   .editor-layout {
@@ -1151,14 +1164,14 @@
     place-items: center;
     width: 35px;
     height: 35px;
-    background: #eff5fd;
+    background: #fcf0f0;
     border-radius: 7px;
-    color: #6f90ba;
+    color: #b91c24;
   }
   .sql-help {
     font-size: 11px;
     line-height: 1.8;
-    color: #5e6e83;
+    color: #586273;
     margin: 12px 0 18px;
   }
   .dependency-chips {
@@ -1185,7 +1198,7 @@
     gap: 18px;
     flex-wrap: wrap;
     font-size: 12px;
-    color: #5e6e83;
+    color: #586273;
     margin: -8px 0 23px;
   }
   .heading-actions {
@@ -1200,10 +1213,10 @@
   }
   .sql-display {
     padding: 24px;
-    background: #f5f8fd;
+    background: #f8f9fb;
     border: 1px solid #e3eaf3;
     border-radius: 6px;
-    color: #365578;
+    color: #151c29;
     line-height: 1.9;
     font-size: 13px;
     min-height: 150px;
@@ -1213,7 +1226,7 @@
   }
   .ownership dt {
     font-size: 11px;
-    color: #5e6e83;
+    color: #586273;
     margin-top: 17px;
   }
   .ownership dd {
@@ -1223,7 +1236,7 @@
   }
   .hash {
     display: block;
-    color: #5e6e83;
+    color: #586273;
     overflow-wrap: anywhere;
     margin: 10px 0;
     font-size: 11px;
@@ -1242,8 +1255,8 @@
     width: 39px;
     height: 34px;
     border-radius: 6px;
-    background: #f0f5fd;
-    color: #6786ae;
+    background: #fcf0f0;
+    color: #b91c24;
     font-size: 13px;
     font-weight: 700;
   }
@@ -1269,7 +1282,7 @@
     margin: 23px 0;
   }
   .dependency-tree ul {
-    border-left: 1px solid #c8d9ec;
+    border-left: 1px solid #e2e5eb;
     margin: 10px 0 10px 7px;
   }
   .dependency-tree li {
@@ -1281,14 +1294,14 @@
     align-items: center;
     flex-wrap: wrap;
     padding: 10px 14px;
-    border: 1px solid #dfe8f3;
-    background: #f8fafd;
+    border: 1px solid #e2e5eb;
+    background: #f8f9fb;
     border-radius: 6px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 12px;
   }
   .dependency-tree .tree-node > a {
-    color: #355f93;
+    color: #b91c24;
     text-decoration: underline;
   }
   .dependency-tree .tree-node .badge {
@@ -1299,7 +1312,7 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     margin: 20px 0 25px;
-    background: #f8fafd;
+    background: #f8f9fb;
     border-radius: 7px;
     padding: 20px;
   }
@@ -1310,11 +1323,11 @@
   .impact-stats strong small {
     font-size: 13px;
     font-weight: 400;
-    color: #5e6e83;
+    color: #586273;
   }
   .impact-stats span {
     font-size: 11px;
-    color: #5e6e83;
+    color: #586273;
   }
   dialog {
     border: 1px solid var(--line);
@@ -1325,7 +1338,7 @@
     box-shadow: 0 25px 100px #12223840;
   }
   dialog::backdrop {
-    background: #182a4090;
+    background: #151c2990;
     backdrop-filter: blur(3px);
   }
   dialog > header {
@@ -1366,7 +1379,7 @@
     position: fixed;
     top: -100px;
     left: 260px;
-    background: var(--blue);
+    background: var(--accent);
     color: white;
     padding: 10px;
     z-index: 100;
@@ -1449,6 +1462,11 @@
       gap: 8px;
     }
     .brand-mark {
+      font-family: Georgia, serif;
+      font-style: italic;
+      font-size: 22px;
+      letter-spacing: -3px;
+      padding-right: 3px;
       width: 32px;
     }
     .stats-grid {
@@ -1556,6 +1574,7 @@
       font-size: 13px;
     }
     .eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
       font-size: 8px;
     }
     .stats-grid {

@@ -4,7 +4,6 @@ import {
   Activity,
   ArrowUpRight,
   BookOpen,
-  Boxes,
   ChevronRight,
   Code2,
   GitBranch,
@@ -22,7 +21,16 @@ import MetricEditor from './pages/MetricEditor';
 import SqlTools from './pages/SqlTools';
 import BreakingChanges from './pages/BreakingChanges';
 import { Empty } from './components/ui';
+import Landing from './pages/Landing';
 export default function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Landing />} />
+      <Route path="*" element={<Workspace />} />
+    </Routes>
+  );
+}
+function Workspace() {
   const location = useLocation(),
     [open, setOpen] = useState(false);
   const health = useLoad(api.health, [location.pathname]);
@@ -59,7 +67,7 @@ export default function App() {
         ? 'Change review'
         : 'Overview';
   const nav = [
-    { to: '/', text: 'Overview', icon: LayoutDashboard },
+    { to: '/overview', text: 'Overview', icon: LayoutDashboard },
     { to: '/metrics', text: 'Metric catalogue', icon: BookOpen },
     { to: '/sql', text: 'SQL workbench', icon: Code2 },
     { to: '/changes', text: 'Change review', icon: GitBranch },
@@ -72,8 +80,8 @@ export default function App() {
       <div className="app-shell">
         <aside className={'sidebar ' + (open ? 'is-open' : '')} inert={mobile && !open}>
           <Link className="brand" to="/">
-            <span className="brand-mark">
-              <Boxes size={23} />
+            <span className="brand-mark" aria-hidden="true">
+              rZ
             </span>
             <span>
               Ricoz<span className="brand-light">Metrics</span>
@@ -88,18 +96,23 @@ export default function App() {
           >
             <X />
           </button>
-          <div className="workspace">
+          <Link
+            className="workspace"
+            to="/overview"
+            aria-label="Ricoz workspace overview"
+            onClick={() => setOpen(false)}
+          >
             <span className="workspace-avatar">R</span>
             <div>
               <strong>Ricoz workspace</strong>
               <small>Internal catalogue</small>
             </div>
             <ChevronRight size={15} />
-          </div>
+          </Link>
           <div className="nav-caption">WORKSPACE</div>
           <nav aria-label="Main navigation">
             {nav.map(({ to, text, icon: Icon }) => (
-              <NavLink key={to} to={to} end={to === '/'}>
+              <NavLink key={to} to={to} end={to === '/overview'}>
                 <Icon size={19} />
                 {text}
               </NavLink>
@@ -156,7 +169,7 @@ export default function App() {
           </div>
           <main id="main">
             <Routes>
-              <Route path="/" element={<Dashboard />} />
+              <Route path="/overview" element={<Dashboard />} />
               <Route path="/metrics" element={<Catalogue />} />
               <Route path="/metrics/new" element={<MetricEditor />} />
               <Route path="/metrics/:id" element={<MetricDetail />} />
@@ -170,7 +183,7 @@ export default function App() {
                     title="Page not found"
                     description="This page is not part of the workspace."
                     action={
-                      <Link className="button primary" to="/">
+                      <Link className="button primary" to="/overview">
                         Back to overview <ArrowUpRight size={16} />
                       </Link>
                     }

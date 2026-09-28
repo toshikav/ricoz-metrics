@@ -54,7 +54,7 @@ test('create, validate, edit, inspect history, compare SQL and delete through th
 });
 test('mobile navigation, empty catalogue and server error are usable', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/');
+  await page.goto('/overview');
   await page.getByRole('button', { name: 'Open navigation' }).click();
   await page.keyboard.press('Escape');
   await expect(page.getByRole('button', { name: 'Open navigation' })).toBeFocused();

@@ -117,3 +117,7 @@ No existing production database was migrated. Create a fresh database for this v
 
 Original backend: [toshikav/ricoz-metrics-mern](https://github.com/toshikav/ricoz-metrics-mern).
 The original backend package identifies RicozMetrics as author and declares ISC. That metadata is retained. Third-party packages retain their own licenses through their published distributions. No new license grant over the full product is asserted.
+
+## Product entry page
+
+The home route (/) introduces RicozMetrics with features, a three-step workflow and FAQs. Choose Open workspace to reach /overview. Existing /metrics, /sql and /changes links still work. The informational page loads without an API connection; the workspace requires the backend.

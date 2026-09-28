@@ -79,7 +79,7 @@ test('populated catalogue, certification and dependency views use real API data'
     });
     await update(orders, { state: 'IN_REVIEW' });
     await page.setViewportSize({ width: 1440, height: 1000 });
-    await page.goto('/');
+    await page.goto('/overview');
     await expect(page.getByRole('heading', { name: 'The metric lifecycle' })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Gross revenue', exact: true })).toBeVisible();
     await page.screenshot({ path: 'work/populated-overview.png', fullPage: true });

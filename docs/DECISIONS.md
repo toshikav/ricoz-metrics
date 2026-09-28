@@ -23,3 +23,7 @@ MySQL SELECT parsing supports metric placeholders without executing SQL. AST dif
 ## Preserve historical revisions
 
 Breaking revisions remain in history after later non-breaking changes or deletion. Deleting a definition never deletes its version/audit records. Independent audit anchoring and retention enforcement remain future work.
+
+## Introduce the product before opening the workspace
+
+The root route presents a static Ricoz-branded information page inspired by https://ricoz.in/franchise/. The dashboard moves to /overview; existing metric, SQL and review URLs remain available. Landing content does not request the API, uses an explicitly illustrative definition and explains current capability limits. All workspace actions navigate to implemented features.
