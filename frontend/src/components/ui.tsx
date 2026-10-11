@@ -1,3 +1,4 @@
+'use client';
 import { useEffect, useRef, type ReactNode } from 'react';
 import {
   AlertCircle,
@@ -8,7 +9,7 @@ import {
   LoaderCircle,
   X,
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { ApiError } from '../api/client';
 import type { Metric } from '../types';
 export const label = (s: string) =>
@@ -161,7 +162,7 @@ export function MetricTable({ metrics }: { metrics: Metric[] }) {
           {metrics.map((m) => (
             <tr key={m._id}>
               <td>
-                <Link className="metric-title" to={'/metrics/' + m._id}>
+                <Link className="metric-title" href={'/metrics/' + m._id}>
                   {m.display_name}
                 </Link>
                 <div className="mono muted small">{m.name}</div>
@@ -177,7 +178,7 @@ export function MetricTable({ metrics }: { metrics: Metric[] }) {
               <td>
                 <Link
                   className="icon-button"
-                  to={'/metrics/' + m._id}
+                  href={'/metrics/' + m._id}
                   aria-label={'Open ' + m.display_name}
                 >
                   <ArrowRight size={17} />

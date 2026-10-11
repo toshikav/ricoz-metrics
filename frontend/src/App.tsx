@@ -1,8 +1,9 @@
+'use client';
 import { useEffect, useRef, useState } from 'react';
-import { NavLink, Routes, Route, Link, useLocation } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   Activity,
-  ArrowUpRight,
   BookOpen,
   ChevronRight,
   Code2,
@@ -14,31 +15,16 @@ import {
 } from 'lucide-react';
 import { api } from './api/client';
 import { useLoad } from './hooks/useLoad';
-import Dashboard from './pages/Dashboard';
-import Catalogue from './pages/Catalogue';
-import MetricDetail from './pages/MetricDetail';
-import MetricEditor from './pages/MetricEditor';
-import SqlTools from './pages/SqlTools';
-import BreakingChanges from './pages/BreakingChanges';
-import { Empty } from './components/ui';
-import Landing from './pages/Landing';
-export default function App() {
-  return (
-    <Routes>
-      <Route path="/" element={<Landing />} />
-      <Route path="*" element={<Workspace />} />
-    </Routes>
-  );
-}
-function Workspace() {
-  const location = useLocation(),
+export default function Workspace({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname(),
     [open, setOpen] = useState(false);
-  const health = useLoad(api.health, [location.pathname]);
-  const [mobile, setMobile] = useState(() => window.matchMedia('(max-width: 720px)').matches);
+  const health = useLoad(api.health, [pathname]);
+  const [mobile, setMobile] = useState(true);
   const closeButton = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     const query = window.matchMedia('(max-width: 720px)');
     const change = () => setMobile(query.matches);
+    change();
     query.addEventListener('change', change);
     return () => query.removeEventListener('change', change);
   }, []);
@@ -58,12 +44,12 @@ function Workspace() {
   useEffect(() => {
     setOpen(false);
     window.scrollTo(0, 0);
-  }, [location.pathname]);
-  const current = location.pathname.startsWith('/metrics')
+  }, [pathname]);
+  const current = pathname.startsWith('/metrics')
     ? 'Metric catalogue'
-    : location.pathname === '/sql'
+    : pathname === '/sql'
       ? 'SQL workbench'
-      : location.pathname === '/changes'
+      : pathname === '/changes'
         ? 'Change review'
         : 'Overview';
   const nav = [
@@ -79,7 +65,7 @@ function Workspace() {
       </a>
       <div className="app-shell">
         <aside className={'sidebar ' + (open ? 'is-open' : '')} inert={mobile && !open}>
-          <Link className="brand" to="/">
+          <Link className="brand" href="/">
             <span className="brand-mark" aria-hidden="true">
               rZ
             </span>
@@ -98,7 +84,7 @@ function Workspace() {
           </button>
           <Link
             className="workspace"
-            to="/overview"
+            href="/overview"
             aria-label="Ricoz workspace overview"
             onClick={() => setOpen(false)}
           >
@@ -112,10 +98,21 @@ function Workspace() {
           <div className="nav-caption">WORKSPACE</div>
           <nav aria-label="Main navigation">
             {nav.map(({ to, text, icon: Icon }) => (
-              <NavLink key={to} to={to} end={to === '/overview'}>
+              <Link
+                key={to}
+                href={to}
+                className={
+                  (to === '/metrics' ? pathname.startsWith(to) : pathname === to) ? 'active' : ''
+                }
+                aria-current={
+                  (to === '/metrics' ? pathname.startsWith(to) : pathname === to)
+                    ? 'page'
+                    : undefined
+                }
+              >
                 <Icon size={19} />
                 {text}
-              </NavLink>
+              </Link>
             ))}
           </nav>
           <div className="sidebar-note">
@@ -167,31 +164,7 @@ function Workspace() {
               Internal workspace
             </span>
           </div>
-          <main id="main">
-            <Routes>
-              <Route path="/overview" element={<Dashboard />} />
-              <Route path="/metrics" element={<Catalogue />} />
-              <Route path="/metrics/new" element={<MetricEditor />} />
-              <Route path="/metrics/:id" element={<MetricDetail />} />
-              <Route path="/metrics/:id/edit" element={<MetricEditor />} />
-              <Route path="/sql" element={<SqlTools />} />
-              <Route path="/changes" element={<BreakingChanges />} />
-              <Route
-                path="*"
-                element={
-                  <Empty
-                    title="Page not found"
-                    description="This page is not part of the workspace."
-                    action={
-                      <Link className="button primary" to="/overview">
-                        Back to overview <ArrowUpRight size={16} />
-                      </Link>
-                    }
-                  />
-                }
-              />
-            </Routes>
-          </main>
+          <main id="main">{children}</main>
           <footer className="app-footer">
             <span>RicozMetrics</span>
             <span>Definitions you can trace.</span>

@@ -2,7 +2,7 @@
 
 A metric catalogue and governance workspace for defining business metrics, reviewing calculation changes and tracing dependencies.
 
-Built on the original RicozMetrics backend by toshikav. This repository retains the product identity and source attribution, with a revised backend, React frontend and executable regression tests.
+Built on the original RicozMetrics backend by toshikav. This repository retains the product identity and source attribution, with a revised backend, Next.js App Router frontend and executable regression tests.
 
 ## What is included
 
@@ -49,7 +49,7 @@ CLIENT_URL=http://localhost:5173
 
 ```dotenv
 # frontend/.env
-VITE_API_BASE_URL=http://localhost:5000
+NEXT_PUBLIC_API_BASE_URL=http://localhost:5000
 ```
 
 Then run:
@@ -59,7 +59,7 @@ npm ci
 npm run dev
 ```
 
-The backend also supports npm run dev and npm start from backend/. The frontend supports npm run dev from frontend/. If frontend origin changes, update CLIENT_URL. If the API address changes, update VITE_API_BASE_URL and rebuild the frontend. Only public API configuration belongs in Vite variables.
+The backend also supports npm run dev and npm start from backend/. The frontend supports npm run dev from frontend/. If frontend origin changes, update CLIENT_URL. If the API address changes, update NEXT_PUBLIC_API_BASE_URL and rebuild the frontend. Only public API configuration belongs in NEXT_PUBLIC variables; these values are included at build time.
 
 ## Build and verify
 
@@ -71,7 +71,7 @@ npm run test:e2e
 npm audit
 ```
 
-The frontend production bundle is frontend/dist. Serve it with a static host configured to fall back to index.html for client-side routes. Run the backend with npm start --workspace backend against a persistent replica set. TLS and access control must be supplied by the deployment environment.
+The frontend production build is frontend/.next. Run npm run start --workspace frontend on a Node.js host (default port 3000; set PORT to override). Next.js serves the static landing page and the workspace routes. A Vite static-host configuration is no longer sufficient. Set NEXT_PUBLIC_API_BASE_URL before building and CLIENT_URL to the deployed frontend origin. Run the backend with npm start --workspace backend against a persistent replica set. TLS and access control must be supplied by the deployment environment.
 
 docs/ci-workflow.yml contains the GitHub Actions configuration. To enable hosted CI, place it at .github/workflows/ci.yml using a GitHub credential with workflow permission. The publishing credential did not have that scope; verification was run locally.
 
@@ -90,10 +90,11 @@ backend/src/
   controllers/   Catalogue, history, summary and analysis endpoints
   models/        Metric, revision, audit event and transactional head
   services/      SQL, dependency graph, validation and atomic mutations
+frontend/app/    Next.js layouts, metadata and file-based routes
 frontend/src/
   api/           Centralized typed API client
   components/    Shared controls, tables, notices and dialogs
-  pages/         Overview, catalogue, editor, detail, SQL and changes
+  screens/       Overview, catalogue, editor, detail, SQL and changes
   hooks/         Async loading and retry handling
 docs/
   BUILD-PLAN.md  Revised scope, release gates and limitations
@@ -121,3 +122,5 @@ The original backend package identifies RicozMetrics as author and declares ISC.
 ## Product entry page
 
 The home route (/) introduces RicozMetrics with features, a three-step workflow and FAQs. Choose Open workspace to reach /overview. Existing /metrics, /sql and /changes links still work. The informational page loads without an API connection; the workspace requires the backend.
+
+For browser verification against the production build, first run npm run build, then set NEXT_E2E_PRODUCTION=1 before npm run test:e2e (PowerShell: `$env:NEXT_E2E_PRODUCTION="1"`). The demo still uses a disposable database.

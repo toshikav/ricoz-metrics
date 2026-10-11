@@ -32,3 +32,7 @@ Verified locally on 27 September 2026 using Node.js 24.11.1, an isolated MongoDB
 ## Limits of verification
 
 No production database, existing catalogue migration, identity provider, public deployment, warehouse execution or real BI client connection was tested. Docker Compose is supplied as a persistent local setup option but was not executed in this environment. Automated accessibility checks do not replace a full assistive-technology audit. Tests use isolated fixtures; no fixtures are embedded in the product. GitHub-hosted CI was not enabled because the publishing credential lacks workflow scope; its configuration is provided in docs/ci-workflow.yml.
+
+## Next.js migration — 9 October 2026
+
+Rechecked the migrated frontend against the real Express API and disposable MongoDB replica set. Backend tests: 15 passed; frontend tests: 5 passed. Next.js 16.4.0 production compilation and TypeScript checks passed. All 5 Chromium scenarios passed against Next.js production serving, including landing without API, filtering, certification/dependency navigation, create/edit/history/SQL/delete, mobile navigation and server errors. Automated accessibility and viewport checks passed; desktop overview and mobile layouts retained the Ricoz branding. npm audit reported 0 vulnerabilities after compatible dependency patches. No live hosting migration or production database was tested.

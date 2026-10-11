@@ -11,4 +11,4 @@ test-results/
 work/
 *.tsbuildinfo
 
-ricoz_metrics_backup.archive.gz
+.next/

@@ -27,3 +27,7 @@ Breaking revisions remain in history after later non-breaking changes or deletio
 ## Introduce the product before opening the workspace
 
 The root route presents a static Ricoz-branded information page inspired by https://ricoz.in/franchise/. The dashboard moves to /overview; existing metric, SQL and review URLs remain available. Landing content does not request the API, uses an explicitly illustrative definition and explains current capability limits. All workspace actions navigate to implemented features.
+
+## 9 October 2026: Next.js migration
+
+Frontend uses Next.js 16 App Router with React 19. The landing page is statically rendered; the workspace layout and interactive screens are client components. Native Next links, route parameters and search parameters replace React Router. Express and MongoDB remain the API and data layer. Public API configuration uses NEXT_PUBLIC_API_BASE_URL at build time. Production hosting runs Next.js on Node rather than serving the old Vite dist folder.

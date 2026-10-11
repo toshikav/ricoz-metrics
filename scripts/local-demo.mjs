@@ -13,9 +13,16 @@ await mongoose.connect(repl.getUri());
 await initializeDatabase();
 const { default: app } = await import('../backend/src/app.js');
 const server = app.listen(5000, '127.0.0.1');
-const vite = spawn(
+const web = spawn(
   process.execPath,
-  [resolve(root, 'node_modules/vite/bin/vite.js'), '--host', '127.0.0.1'],
+  [
+    resolve(root, 'node_modules/next/dist/bin/next'),
+    process.env.NEXT_E2E_PRODUCTION === '1' ? 'start' : 'dev',
+    '--hostname',
+    '127.0.0.1',
+    '--port',
+    '5173',
+  ],
   { cwd: resolve(root, 'frontend'), stdio: 'inherit', env: process.env },
 );
 console.log(
@@ -25,7 +32,7 @@ let stopping = false;
 async function stop() {
   if (stopping) return;
   stopping = true;
-  vite.kill();
+  web.kill();
   server.close();
   await mongoose.disconnect();
   await repl.stop();
@@ -33,4 +40,4 @@ async function stop() {
 }
 process.on('SIGINT', stop);
 process.on('SIGTERM', stop);
-vite.on('exit', stop);
+web.on('exit', stop);

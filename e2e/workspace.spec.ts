@@ -72,5 +72,7 @@ test('mobile navigation, empty catalogue and server error are usable', async ({ 
     }),
   );
   await page.reload();
-  await expect(page.getByRole('alert')).toContainText('Database unavailable');
+  await expect(page.getByRole('alert').filter({ hasText: 'Database unavailable' })).toContainText(
+    'Database unavailable',
+  );
 });
