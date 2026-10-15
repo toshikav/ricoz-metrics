@@ -40,3 +40,7 @@ Rechecked the migrated frontend against the real Express API and disposable Mong
 ## Sessions and build root — 15 October 2026
 
 Rechecked on Node.js 24.11.1. Backend tests: 16 passed, including unsigned requests, consumer and engineer denials, engineer drafts, and a second steward setup. Frontend input tests: 5 passed. Next.js 16.4.0 production build and TypeScript checks passed for the App Router under `frontend/src/app`. Chromium scenarios: 5 passed against the local demo, including a landing page that makes no API call, sign-in before the workspace, catalogue filtering, certification, dependencies, create/edit/history/SQL/delete, mobile navigation and server errors. No production database, Render redeploy, or named identity provider was tested.
+
+## Router directory check — 15 October 2026
+
+Next.js 16.4.0 throws when `pages` and `app` have different parents. A planted `frontend/pages` directory beside `frontend/src/app`, and a planted `frontend/app` plus `frontend/src/pages`, both threw that error until the prebuild removed them. `frontend/src/app` stayed in place. With `CI=true` and no `.next/cache`, the same no-cache warning Render prints appeared, then the production build and TypeScript check passed for all 9 routes. Render itself was not redeployed from this machine.

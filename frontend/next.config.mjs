@@ -1,5 +1,8 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { prepareRouter } from './scripts/prepare-router.mjs';
+
+prepareRouter();
 
 const frontendDir = path.dirname(fileURLToPath(import.meta.url));
 // npm workspaces hoist `next` to the repository. Turbopack will not resolve

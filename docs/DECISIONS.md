@@ -30,7 +30,7 @@ The root route presents a static Ricoz-branded information page inspired by http
 
 ## 15 October 2026: sessions and one router root
 
-Catalogue routes require a session. Consumers read, engineers draft and submit, and stewards certify, archive, delete and manage accounts. The App Router lives at `frontend/src/app`. `turbopack.root` is the repository, where the lockfile and the hoisted Next package live, so a Render checkout under a directory named `src` is not walked into a parent lockfile.
+Catalogue routes require a session. Consumers read, engineers draft and submit, and stewards certify, archive, delete and manage accounts. The App Router lives at `frontend/src/app`. `turbopack.root` is the repository, where the lockfile and the hoisted Next package live, so a Render checkout under a directory named `src` is not walked into a parent lockfile. The frontend build deletes a stray `app`, `pages`, or `src/pages` directory before Next starts, because those parents make `next build` refuse to run.
 
 ## 9 October 2026: Next.js migration
 
