@@ -1,8 +1,10 @@
 import { test, expect } from '@playwright/test';
+import { signIn } from './sign-in';
 test('create, validate, edit, inspect history, compare SQL and delete through the browser', async ({
   page,
 }) => {
   const name = 'browser_' + Date.now();
+  await signIn(page);
   await page.goto('/metrics/new');
   await page.getByLabel('Display name', { exact: true }).fill('Browser revenue');
   await page.getByLabel('Metric key', { exact: false }).fill(name);
@@ -11,14 +13,12 @@ test('create, validate, edit, inspect history, compare SQL and delete through th
   await page
     .getByLabel('SQL definition', { exact: true })
     .fill('SELECT SUM(amount) AS revenue FROM orders');
-  await page.getByLabel('Creator email').fill('owner@example.com');
   await page.getByLabel('Data steward').fill('steward@example.com');
   await page.getByRole('button', { name: 'Create metric', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Browser revenue', exact: true })).toBeVisible();
   await expect(page.getByRole('status')).toContainText('Metric created.');
   await page.getByRole('link', { name: 'Edit definition' }).click();
   await page.getByLabel('Business description').fill('Clarified revenue definition.');
-  await page.getByLabel('Your email').fill('editor@example.com');
   await page.getByLabel('Change summary').fill('Clarify business meaning');
   await page.getByRole('button', { name: 'Save changes', exact: true }).click();
   await expect(page.getByText('Version 2', { exact: true })).toBeVisible();
@@ -31,8 +31,7 @@ test('create, validate, edit, inspect history, compare SQL and delete through th
   await page.getByRole('button', { name: 'Audit log', exact: true }).click();
   await expect(page.getByText('Before and after').first()).toBeVisible();
   await page.getByRole('button', { name: 'Delete metric', exact: true }).click();
-  await page.getByRole('dialog').getByLabel('Your email').fill('editor@example.com');
-  await page.getByRole('dialog').getByRole('textbox').last().fill(name);
+  await page.getByRole('dialog').getByRole('textbox').fill(name);
   await page
     .getByRole('dialog')
     .getByRole('button', { name: 'Delete metric', exact: true })
@@ -54,6 +53,7 @@ test('create, validate, edit, inspect history, compare SQL and delete through th
 });
 test('mobile navigation, empty catalogue and server error are usable', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
+  await signIn(page);
   await page.goto('/overview');
   await page.getByRole('button', { name: 'Open navigation' }).click();
   await page.keyboard.press('Escape');

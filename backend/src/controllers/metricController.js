@@ -6,6 +6,7 @@ import { extractMetricDependencies } from '../services/sqlParser.service.js';
 import { catalogueWrite } from '../services/catalogueWrite.js';
 import { canonical } from '../models/AuditLog.js';
 import { parse, fail, metricSchema, updateSchema, listSchema, email } from '../validation.js';
+import { assertCatalogueWrite } from '../middleware/auth.js';
 export const route = (fn) => (req, res, next) => Promise.resolve(fn(req, res)).catch(next);
 export async function requireMetric(id, session = null) {
   const metric = await Metric.findById(id).session(session).lean({ flattenMaps: true });
@@ -70,7 +71,8 @@ export const getSummary = route(async (req, res) => {
   res.json({ success: true, data: { ...summary, total: summary.total[0]?.count || 0 } });
 });
 export const createMetric = route(async (req, res) => {
-  const input = parse(metricSchema, req.body);
+  const input = { ...parse(metricSchema, req.body), created_by: req.user.email };
+  assertCatalogueWrite(req.user, { nextState: input.state, action: 'create' });
   const result = await catalogueWrite(async (session) => {
     const validation = await validateMetric(input, { session });
     checked(validation);
@@ -111,12 +113,17 @@ export const createMetric = route(async (req, res) => {
   res.status(201).json(result);
 });
 export const updateMetric = route(async (req, res) => {
-  const { updated_by, expected_version, changes_summary, ...updates } = parse(
-    updateSchema,
-    req.body,
+  const parsed = parse(updateSchema, req.body);
+  const { expected_version, changes_summary } = parsed;
+  const updates = Object.fromEntries(
+    Object.entries(parsed).filter(
+      ([key]) => key !== 'updated_by' && key !== 'expected_version' && key !== 'changes_summary',
+    ),
   );
+  const updated_by = req.user.email;
   const result = await catalogueWrite(async (session) => {
     const before = await requireMetric(req.params.id, session);
+    assertCatalogueWrite(req.user, { before, nextState: updates.state, action: 'update' });
     if (expected_version !== before.version)
       throw fail('This metric changed since you opened it. Reload before saving.', 409);
     const input = parse(metricSchema, {
@@ -205,10 +212,15 @@ export const updateMetric = route(async (req, res) => {
   res.json(result);
 });
 export const deleteMetric = route(async (req, res) => {
-  const { deleted_by, expected_version } = parse(
-    z.strictObject({ deleted_by: email, expected_version: z.number().int().positive() }),
+  const { expected_version } = parse(
+    z.strictObject({
+      deleted_by: email.optional(),
+      expected_version: z.number().int().positive(),
+    }),
     req.body,
   );
+  const deleted_by = req.user.email;
+  assertCatalogueWrite(req.user, { action: 'delete' });
   const result = await catalogueWrite(async (session) => {
     const metric = await requireMetric(req.params.id, session);
     if (expected_version !== metric.version)

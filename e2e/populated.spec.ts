@@ -1,9 +1,11 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { signIn, signInApi } from './sign-in';
 test('populated catalogue, certification and dependency views use real API data', async ({
   page,
   request,
 }) => {
+  await signInApi(request);
   const root = 'http://localhost:5000/api/v1',
     suffix = String(Date.now());
   const records: any[] = [];
@@ -79,6 +81,7 @@ test('populated catalogue, certification and dependency views use real API data'
     });
     await update(orders, { state: 'IN_REVIEW' });
     await page.setViewportSize({ width: 1440, height: 1000 });
+    await signIn(page);
     await page.goto('/overview');
     await expect(page.getByRole('heading', { name: 'The metric lifecycle' })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Gross revenue', exact: true })).toBeVisible();

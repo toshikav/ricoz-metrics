@@ -42,7 +42,7 @@ export const updateSchema = z
   .strictObject({
     ...optionalFields(metricSchema),
     calculation_logic: z.strictObject(optionalFields(logic)).optional(),
-    updated_by: email,
+    updated_by: email.optional(),
     expected_version: z.number().int().positive(),
     changes_summary: text(1000),
   })

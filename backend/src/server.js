@@ -2,8 +2,10 @@ import 'dotenv/config';
 import mongoose from 'mongoose';
 import app from './app.js';
 import connectDB from './config/database.js';
+import { bootstrapStewardFromEnv } from './services/accounts.js';
 try {
   await connectDB();
+  await bootstrapStewardFromEnv();
   const server = app.listen(Number(process.env.PORT) || 5000, process.env.HOST || '127.0.0.1', () =>
     console.log('RicozMetrics API listening on port ' + (process.env.PORT || 5000)),
   );

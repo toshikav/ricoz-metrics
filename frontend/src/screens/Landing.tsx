@@ -55,7 +55,7 @@ const faqs = [
   ],
   [
     'Can anyone open the workspace?',
-    'This version is intended for a protected internal environment. Sign-in and role-based permissions are not implemented. Access protection must be provided by your deployment before using it with company data.',
+    'No. Sign in with an account created by a steward. Consumers can view the catalogue, engineers can draft metrics, and stewards certify, archive and delete. Serve the site over HTTPS and keep the database off the public internet.',
   ],
 ];
 

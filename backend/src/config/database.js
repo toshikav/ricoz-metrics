@@ -1,8 +1,16 @@
 import mongoose from 'mongoose';
-import { Metric, MetricVersion, AuditLog } from '../models/index.js';
+import { Metric, MetricVersion, AuditLog, User, Session, AuthState } from '../models/index.js';
 import CatalogState from '../models/CatalogState.js';
 export async function initializeDatabase() {
-  await Promise.all([Metric.init(), MetricVersion.init(), AuditLog.init(), CatalogState.init()]);
+  await Promise.all([
+    Metric.init(),
+    MetricVersion.init(),
+    AuditLog.init(),
+    CatalogState.init(),
+    User.init(),
+    Session.init(),
+    AuthState.init(),
+  ]);
   await CatalogState.updateOne(
     { _id: 'catalogue' },
     { $setOnInsert: { sequence: 0, hash: '0' } },

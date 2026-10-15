@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { signIn } from './sign-in';
 
 test('landing works without the API, explains the product and opens the workspace', async ({
   page,
@@ -43,6 +44,8 @@ test('landing works without the API, explains the product and opens the workspac
   await page.unroute('http://localhost:5000/**');
   await page.getByRole('link', { name: 'Open workspace' }).first().click();
   await expect(page).toHaveURL(/\/overview$/);
+  await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
+  await signIn(page);
   await expect(page.getByRole('heading', { name: 'The metric lifecycle' })).toBeVisible();
   await page.getByRole('button', { name: 'Open navigation' }).click();
   await page.getByRole('link', { name: 'RicozMetrics METRIC GOVERNANCE' }).click();

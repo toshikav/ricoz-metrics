@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter, useParams } from 'next/navigation';
 import { ArrowLeft, Braces, Check, Save } from 'lucide-react';
 import { api } from '../api/client';
+import { useAuth } from '../auth';
 import { useLoad } from '../hooks/useLoad';
 import { ErrorNotice, Loading, PageHeading } from '../components/ui';
 import { type Definition, type Metric, type Validation, types, tiers, transitions } from '../types';
@@ -29,18 +30,18 @@ export default function MetricEditor() {
   return <Editor key={id || 'new'} existing={state.data?.data} />;
 }
 function Editor({ existing }: { existing?: Metric }) {
-  const router = useRouter(),
-    [form, setForm] = useState<Definition>(existing ? definition(existing) : blank);
-  const [tags, setTags] = useState(form.tags.join(', ')),
-    [params, setParams] = useState(
-      JSON.stringify(form.calculation_logic.parameters || {}, null, 2),
-    );
-  const [actor, setActor] = useState(''),
-    [summary, setSummary] = useState(''),
-    [busy, setBusy] = useState(false),
-    [error, setError] = useState<unknown>(),
-    [validation, setValidation] = useState<Validation>(),
-    [dirty, setDirty] = useState(false);
+  const router = useRouter();
+  const [form, setForm] = useState<Definition>(existing ? definition(existing) : blank);
+  const [tags, setTags] = useState(form.tags.join(', '));
+  const [params, setParams] = useState(
+    JSON.stringify(form.calculation_logic.parameters || {}, null, 2),
+  );
+  const [summary, setSummary] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<unknown>();
+  const [validation, setValidation] = useState<Validation>();
+  const [dirty, setDirty] = useState(false);
+  const { user } = useAuth();
   const frozen = existing?.state === 'CERTIFIED' || existing?.state === 'ARCHIVED';
   useEffect(() => {
     const leave = (e: BeforeUnloadEvent) => {
@@ -52,6 +53,15 @@ function Editor({ existing }: { existing?: Metric }) {
     window.addEventListener('beforeunload', leave);
     return () => window.removeEventListener('beforeunload', leave);
   }, [dirty]);
+  if (!user) return null;
+  const account = user;
+  const governed = new Set(['CERTIFIED', 'DEPRECATED', 'ARCHIVED']);
+  const locked =
+    account.role === 'consumer' ||
+    (account.role === 'engineer' && !!existing && governed.has(existing.state));
+  const choices = (existing ? [existing.state, ...transitions[existing.state]] : ['DRAFT']).filter(
+    (state) => account.role === 'steward' || state === existing?.state || !governed.has(state),
+  );
   function set<K extends keyof Definition>(key: K, value: Definition[K]) {
     setForm((f) => ({ ...f, [key]: value }));
     setValidation(undefined);
@@ -86,14 +96,13 @@ function Editor({ existing }: { existing?: Metric }) {
     setBusy(true);
     setError(undefined);
     try {
-      const body = payload(),
+      const body = { ...payload(), created_by: existing?.created_by || account.email },
         r = await api.validate({ ...body, ...(existing ? { metric_id: existing._id } : {}) });
       setValidation(r.data);
       if (!r.data.valid || !save) return;
       const saved = existing
         ? await api.update(existing._id, {
             ...body,
-            updated_by: actor,
             expected_version: existing.version,
             changes_summary: summary,
           })
@@ -140,7 +149,7 @@ function Editor({ existing }: { existing?: Metric }) {
       ) : (
         <form onSubmit={submit} className="editor-layout">
           <div>
-            <fieldset disabled={busy} className="panel panel-body">
+            <fieldset disabled={busy || locked} className="panel panel-body">
               <div className="section-heading">
                 <span className="section-icon">
                   <Braces size={18} />
@@ -306,19 +315,12 @@ function Editor({ existing }: { existing?: Metric }) {
             </fieldset>
           </div>
           <div className="editor-aside">
-            <fieldset disabled={busy} className="panel panel-body">
+            <fieldset disabled={busy || locked} className="panel panel-body">
               <h2>Ownership & lifecycle</h2>
-              <label>
-                Creator email
-                <input
-                  type="email"
-                  required
-                  disabled={!!existing}
-                  value={form.created_by}
-                  onChange={(e) => set('created_by', e.target.value)}
-                  placeholder="owner@company.com"
-                />
-              </label>
+              <p className="small muted">
+                Recorded as {existing?.created_by || account.email}. This is the signed-in account, not
+                a typed label.
+              </p>
               <label>
                 Data steward
                 <input
@@ -335,25 +337,20 @@ function Editor({ existing }: { existing?: Metric }) {
                   value={form.state}
                   onChange={(e) => set('state', e.target.value as Definition['state'])}
                 >
-                  {(existing ? [existing.state, ...transitions[existing.state]] : ['DRAFT']).map(
-                    (s) => (
-                      <option key={s}>{s}</option>
-                    ),
-                  )}
+                  {choices.map((s) => (
+                    <option key={s}>{s}</option>
+                  ))}
                 </select>
               </label>
+              {locked && (
+                <p className="small muted">
+                  {account.role === 'consumer'
+                    ? 'Your role can view metrics but cannot change them.'
+                    : 'Only a steward can change a metric after certification.'}
+                </p>
+              )}
               {existing && (
                 <>
-                  <label>
-                    Your email
-                    <input
-                      type="email"
-                      required
-                      value={actor}
-                      onChange={(e) => setActor(e.target.value)}
-                      placeholder="editor@company.com"
-                    />
-                  </label>
                   <label>
                     Change summary
                     <textarea
@@ -372,7 +369,8 @@ function Editor({ existing }: { existing?: Metric }) {
                 </>
               )}
               <p className="small muted">
-                Actor emails are recorded for history. They are not authenticated identities.
+                Saves are recorded under {account.email}. Certification, archival and deletion are
+                steward actions.
               </p>
             </fieldset>
             <ErrorNotice error={error} />
@@ -395,13 +393,13 @@ function Editor({ existing }: { existing?: Metric }) {
               <button
                 type="button"
                 className="button secondary"
-                disabled={busy}
+                disabled={busy || locked}
                 onClick={(e) => submit(e, false)}
               >
                 <Check size={17} />
                 Validate definition
               </button>
-              <button className="button primary" disabled={busy}>
+              <button className="button primary" disabled={busy || locked}>
                 <Save size={17} />
                 {busy ? 'Checking definition…' : existing ? 'Save changes' : 'Create metric'}
               </button>

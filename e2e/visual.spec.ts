@@ -1,7 +1,9 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { signIn } from './sign-in';
 test('overview, editor and mobile view are accessible and fit the viewport', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
+  await signIn(page);
   await page.goto('/overview');
   await expect(page.getByRole('heading', { name: 'The metric lifecycle' })).toBeVisible();
   await page.screenshot({ path: 'work/overview-desktop.png', fullPage: true });

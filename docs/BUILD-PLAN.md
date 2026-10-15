@@ -16,7 +16,7 @@ Deliver a dependable metric catalogue and governance workspace using the existin
 | Hash chaining makes audit records immutable                                            | Transactions and deterministic hash verification provide tamper evidence. Database administrators can rewrite an entire chain; independent signed checkpoints or external retention are separate work. |
 | Dependency diagrams are column-level lineage                                           | This release exposes metric-reference lineage from placeholders. True column lineage requires warehouse schemas and dialect-aware resolution.                                                          |
 | SQL structure comparison proves semantic compatibility                                 | Use conservative static change detection. Changed expressions, predicates, aliases or joins are potentially breaking; result equivalence needs fixture queries against the intended warehouse.         |
-| Approval warnings implement RBAC                                                       | Lifecycle guards are implemented, but identity and role enforcement are not. Actor emails are self-reported. Restrict deployment to an access-controlled internal environment.                         |
+| Approval warnings implement RBAC                                                       | Lifecycle guards and three server-enforced roles are implemented. A company OIDC issuer was not named, so sign-in is an application password.                                          |
 | Dashboard counts can be built from one result page                                     | Add a real aggregation endpoint over the entire catalogue.                                                                                                                                             |
 | A latest-version comparison is enough for change history                               | Retain every breaking revision even after later metadata-only changes.                                                                                                                                 |
 | Public cloud connection settings can be copied from the source repository              | Use clean history and example configuration. Do not reuse tracked environment files. Rotate any credentials exposed upstream.                                                                          |
@@ -53,7 +53,7 @@ Deliver a dependable metric catalogue and governance workspace using the existin
 - SQL workbench validates or compares definitions without simulated execution.
 - Destructive actions require confirmation; stale edits and backend failures are actionable.
 - Loading, empty, unavailable and populated states all use live API results.
-- No invented login or role claims; no embedded database credentials.
+- Sign-in and roles are enforced by the API. No embedded database credentials.
 - Local fonts, visible keyboard focus, reduced-motion support, mobile navigation and semantic controls.
 
 ### Verification and delivery
@@ -69,8 +69,8 @@ Deliver a dependable metric catalogue and governance workspace using the existin
 
 These are deployment prerequisites for exposure beyond a protected internal workspace.
 
-1. Integrate the organization's OIDC provider and server-derived identities.
-2. Add server-enforced engineer, steward and consumer permissions; define who may certify.
+1. Replace the password check with the organization's OIDC provider when that issuer is named. Keep the same roles.
+2. Server-enforced engineer, steward and consumer permissions are in place. Stewards certify.
 3. Add explicit approval records and separation of duties if the governance policy requires them.
 4. Decide tenant boundaries before introducing tenant data; scope every query, version and audit record consistently.
 5. Define backup/restore objectives, retention, database least-privilege roles and an independent audit checkpoint store.
@@ -92,6 +92,6 @@ Evaluate REST result queries, GraphQL or PostgreSQL-compatible connectivity only
 
 ## Operational limits
 
-This release is a single-workspace catalogue. No authentication, tenant isolation, warehouse execution, cross-dialect translation, GraphQL, PG-wire endpoint, alert dispatch or column-level lineage is claimed. Audit chaining is not independently anchored. Parameters are stored metadata, not executed bindings. The global transactional head favors correctness over high write throughput.
+This release is a single-workspace catalogue with application sign-in and three roles. No tenant isolation, warehouse execution, cross-dialect translation, GraphQL, PG-wire endpoint, alert dispatch or column-level lineage is claimed. Audit chaining is not independently anchored. Parameters are stored metadata, not executed bindings. The global transactional head favors correctness over high write throughput.
 
 Scheduling is conditional on staffing and infrastructure; the original four-week estimate is not a delivery guarantee.

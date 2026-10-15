@@ -36,3 +36,7 @@ No production database, existing catalogue migration, identity provider, public 
 ## Next.js migration — 9 October 2026
 
 Rechecked the migrated frontend against the real Express API and disposable MongoDB replica set. Backend tests: 15 passed; frontend tests: 5 passed. Next.js 16.4.0 production compilation and TypeScript checks passed. All 5 Chromium scenarios passed against Next.js production serving, including landing without API, filtering, certification/dependency navigation, create/edit/history/SQL/delete, mobile navigation and server errors. Automated accessibility and viewport checks passed; desktop overview and mobile layouts retained the Ricoz branding. npm audit reported 0 vulnerabilities after compatible dependency patches. No live hosting migration or production database was tested.
+
+## Sessions and build root â€” 15 October 2026
+
+Rechecked on Node.js 24.11.1. Backend tests: 16 passed, including unsigned requests, consumer and engineer denials, engineer drafts, and a second steward setup. Frontend input tests: 5 passed. Next.js 16.4.0 production build and TypeScript checks passed for the App Router under `frontend/src/app`. Chromium scenarios: 5 passed against the local demo, including a landing page that makes no API call, sign-in before the workspace, catalogue filtering, certification, dependencies, create/edit/history/SQL/delete, mobile navigation and server errors. No production database, Render redeploy, or named identity provider was tested.

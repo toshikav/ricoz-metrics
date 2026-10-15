@@ -77,9 +77,13 @@ docs/ci-workflow.yml contains the GitHub Actions configuration. To enable hosted
 
 ## Access boundary
 
-This version has no application authentication or RBAC. It defaults to loopback binding and is intended for local development or an internal workspace behind an authenticated access gateway. Do not expose the API directly to the public internet. Entered actor emails are audit labels, not verified identities. CORS is not authentication.
+Sign-in is required for the catalogue. Passwords are stored as scrypt hashes. The session cookie is httpOnly. The first account is a steward, created from the sign-in screen or from `BOOTSTRAP_STEWARD_EMAIL` and `BOOTSTRAP_STEWARD_PASSWORD` when the database has no accounts.
 
-The gateway must protect both frontend and API; the backend must be unreachable except through that gateway. Before multi-user governance is treated as authoritative, implement the identity and authorization phase in docs/BUILD-PLAN.md.
+- Consumers can view the catalogue and use the SQL workbench.
+- Engineers can create drafts and submit them for review.
+- Stewards can certify, deprecate, archive, delete and manage accounts.
+
+The signed-in email is the audit actor. Typed actor emails are ignored. The API still defaults to loopback binding. Serve it over HTTPS and do not expose MongoDB to the public internet. A company identity provider can replace the password check later; none was specified for this release.
 
 SQL is parsed as MySQL SELECT syntax. Definitions are never executed or translated to other warehouses. Placeholder dependencies express metric references, not an executable semantic layer.
 
@@ -90,7 +94,7 @@ backend/src/
   controllers/   Catalogue, history, summary and analysis endpoints
   models/        Metric, revision, audit event and transactional head
   services/      SQL, dependency graph, validation and atomic mutations
-frontend/app/    Next.js layouts, metadata and file-based routes
+frontend/src/app/ Next.js layouts, metadata and file-based routes
 frontend/src/
   api/           Centralized typed API client
   components/    Shared controls, tables, notices and dialogs
@@ -121,6 +125,6 @@ The original backend package identifies RicozMetrics as author and declares ISC.
 
 ## Product entry page
 
-The home route (/) introduces RicozMetrics with features, a three-step workflow and FAQs. Choose Open workspace to reach /overview. Existing /metrics, /sql and /changes links still work. The informational page loads without an API connection; the workspace requires the backend.
+The home route (/) introduces RicozMetrics with features, a three-step workflow and FAQs. Choose Open workspace to reach /overview and sign in. Existing /metrics, /sql and /changes links still work. The informational page loads without an API connection; the workspace requires the backend and a session.
 
 For browser verification against the production build, first run npm run build, then set NEXT_E2E_PRODUCTION=1 before npm run test:e2e (PowerShell: `$env:NEXT_E2E_PRODUCTION="1"`). The demo still uses a disposable database.

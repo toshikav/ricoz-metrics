@@ -13,6 +13,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { api } from '../api/client';
+import { useAuth } from '../auth';
 import { useLoad } from '../hooks/useLoad';
 import {
   Badge,
@@ -28,6 +29,7 @@ import {
 } from '../components/ui';
 import type { Metric, Tree } from '../types';
 export default function MetricDetail() {
+  const { user } = useAuth();
   const { id } = useParams<{ id: string }>(),
     state = useLoad(() => api.get(id!), [id]),
     [tab, setTab] = useState('definition'),
@@ -53,6 +55,7 @@ export default function MetricDetail() {
       setSaved(null);
     }
   }, [id]);
+  if (!user) return null;
   return (
     <>
       <Link className="back-link" href="/metrics">
@@ -71,19 +74,24 @@ export default function MetricDetail() {
               description={m.description}
               action={
                 <div className="heading-actions">
-                  {m.state !== 'ARCHIVED' && (
-                    <Link className="button secondary" href={'/metrics/' + m._id + '/edit'}>
-                      <Pencil size={16} />
-                      Edit definition
-                    </Link>
+                  {m.state !== 'ARCHIVED' &&
+                    (user.role === 'steward' ||
+                      (user.role === 'engineer' &&
+                        (m.state === 'DRAFT' || m.state === 'IN_REVIEW'))) && (
+                      <Link className="button secondary" href={'/metrics/' + m._id + '/edit'}>
+                        <Pencil size={16} />
+                        Edit definition
+                      </Link>
+                    )}
+                  {user.role === 'steward' && (
+                    <button
+                      className="icon-button danger"
+                      aria-label="Delete metric"
+                      onClick={() => setDeleting(true)}
+                    >
+                      <Trash2 size={18} />
+                    </button>
                   )}
-                  <button
-                    className="icon-button danger"
-                    aria-label="Delete metric"
-                    onClick={() => setDeleting(true)}
-                  >
-                    <Trash2 size={18} />
-                  </button>
                 </div>
               }
             />
@@ -352,8 +360,8 @@ function AuditHistory({ id }: { id: string }) {
       <div className="notice info">
         <ShieldCheck size={18} />
         <span>
-          Events are hash-linked across the catalogue. This is an integrity aid, not independently
-          verified immutability or authenticated actor identity.
+          Events are hash-linked across the catalogue and the actor is the signed-in account. The
+          chain is an integrity aid, not an independently anchored archive.
         </span>
       </div>
       <ErrorNotice error={s.error} retry={s.reload} />
@@ -391,8 +399,7 @@ function AuditHistory({ id }: { id: string }) {
   );
 }
 function DeleteDialog({ metric, close }: { metric: Metric; close: () => void }) {
-  const [actor, setActor] = useState(''),
-    [confirmation, setConfirmation] = useState(''),
+  const [confirmation, setConfirmation] = useState(''),
     [busy, setBusy] = useState(false),
     [error, setError] = useState<unknown>(),
     router = useRouter();
@@ -401,7 +408,7 @@ function DeleteDialog({ metric, close }: { metric: Metric; close: () => void }) 
     setBusy(true);
     setError(undefined);
     try {
-      await api.remove(metric._id, actor, metric.version);
+      await api.remove(metric._id, metric.version);
       router.push('/metrics');
     } catch (e) {
       setError(e);
@@ -420,16 +427,7 @@ function DeleteDialog({ metric, close }: { metric: Metric; close: () => void }) 
           The definition will be removed from the catalogue. Version history and audit events are
           retained. Metrics with dependents cannot be deleted.
         </p>
-        <label>
-          Your email
-          <input
-            type="email"
-            required
-            value={actor}
-            onChange={(e) => setActor(e.target.value)}
-            disabled={busy}
-          />
-        </label>
+        <p className="small muted">This deletion is recorded under your signed-in account.</p>
         <label>
           Type <code>{metric.name}</code> to confirm
           <input

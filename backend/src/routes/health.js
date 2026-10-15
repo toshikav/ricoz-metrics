@@ -9,7 +9,7 @@ router.get('/', (req, res) => {
     uptime: process.uptime(),
     database: connected ? 'Connected' : 'Disconnected',
     version: '1.1.0',
-    access: 'Internal workspace; no application authentication',
+    access: 'Signed-in workspace. Roles: consumer, engineer, steward.',
   });
 });
 export default router;

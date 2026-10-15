@@ -11,11 +11,21 @@ import {
   LayoutDashboard,
   Menu,
   ShieldCheck,
+  Users,
   X,
 } from 'lucide-react';
 import { api } from './api/client';
+import { AuthProvider, useAuth } from './auth';
 import { useLoad } from './hooks/useLoad';
 export default function Workspace({ children }: { children: React.ReactNode }) {
+  return (
+    <AuthProvider>
+      <Shell>{children}</Shell>
+    </AuthProvider>
+  );
+}
+function Shell({ children }: { children: React.ReactNode }) {
+  const { user, signOut } = useAuth();
   const pathname = usePathname(),
     [open, setOpen] = useState(false);
   const health = useLoad(api.health, [pathname]);
@@ -45,18 +55,22 @@ export default function Workspace({ children }: { children: React.ReactNode }) {
     setOpen(false);
     window.scrollTo(0, 0);
   }, [pathname]);
+  if (!user) return null;
   const current = pathname.startsWith('/metrics')
     ? 'Metric catalogue'
     : pathname === '/sql'
       ? 'SQL workbench'
       : pathname === '/changes'
         ? 'Change review'
-        : 'Overview';
+        : pathname === '/access'
+          ? 'Access'
+          : 'Overview';
   const nav = [
     { to: '/overview', text: 'Overview', icon: LayoutDashboard },
     { to: '/metrics', text: 'Metric catalogue', icon: BookOpen },
     { to: '/sql', text: 'SQL workbench', icon: Code2 },
     { to: '/changes', text: 'Change review', icon: GitBranch },
+    ...(user.role === 'steward' ? [{ to: '/access', text: 'Access', icon: Users }] : []),
   ];
   return (
     <>
@@ -161,7 +175,10 @@ export default function Workspace({ children }: { children: React.ReactNode }) {
             </div>
             <span className="workspace-label">
               <span className="status-dot online" />
-              Internal workspace
+              {user.name} · {user.role}
+              <button className="text-button" type="button" onClick={() => signOut()}>
+                Sign out
+              </button>
             </span>
           </div>
           <main id="main">{children}</main>

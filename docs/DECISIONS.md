@@ -14,7 +14,7 @@ The source snapshot was toshikav/ricoz-metrics-mern at f3040bd1879262abb3364b8a7
 
 ## Keep governance claims precise
 
-Lifecycle transitions and certified-definition freezing are real backend constraints. Actor identity, approvals and role-based permissions are not implemented. Use a protected internal environment until identity and authorization are complete.
+Lifecycle transitions and certified-definition freezing are real backend constraints. Account roles are enforced on the server. A company OIDC issuer was not named, so accounts are email and password records in MongoDB. Replacing the password check with that issuer is a later change, not a second permission model.
 
 ## Make static SQL analysis conservative
 
@@ -27,6 +27,10 @@ Breaking revisions remain in history after later non-breaking changes or deletio
 ## Introduce the product before opening the workspace
 
 The root route presents a static Ricoz-branded information page inspired by https://ricoz.in/franchise/. The dashboard moves to /overview; existing metric, SQL and review URLs remain available. Landing content does not request the API, uses an explicitly illustrative definition and explains current capability limits. All workspace actions navigate to implemented features.
+
+## 15 October 2026: sessions and one router root
+
+Catalogue routes require a session. Consumers read, engineers draft and submit, and stewards certify, archive, delete and manage accounts. The App Router lives at `frontend/src/app`. `turbopack.root` is the repository, where the lockfile and the hoisted Next package live, so a Render checkout under a directory named `src` is not walked into a parent lockfile.
 
 ## 9 October 2026: Next.js migration
 

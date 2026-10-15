@@ -1,12 +1,20 @@
 # API contract
 
-Base: http://localhost:5000. JSON request and response bodies. Errors return { success: false, error: { message, details? }, timestamp }. Validation details contain errors/warnings. No authentication is implemented.
+Base: http://localhost:5000. JSON request and response bodies. Errors return { success: false, error: { message, details? }, timestamp }. Validation details contain errors/warnings. Catalogue and analysis routes require a session cookie named `ricoz_session`. The signed-in account is the audit actor. Roles are consumer (read), engineer (draft and submit) and steward (certify, archive, delete, manage accounts).
 
 ## Routes
 
 | Method | Path                                        | Purpose                                               |
 | ------ | ------------------------------------------- | ----------------------------------------------------- |
 | GET    | /api/health                                 | Readiness; 503 when database is disconnected          |
+| GET    | /api/v1/auth/status                         | Whether the first steward account still needs setup   |
+| POST   | /api/v1/auth/setup                          | Create the first steward and start a session          |
+| POST   | /api/v1/auth/login                          | Start a session                                       |
+| POST   | /api/v1/auth/logout                         | End the session                                       |
+| GET    | /api/v1/auth/me                             | Current account                                       |
+| GET    | /api/v1/auth/users                          | List accounts (steward)                               |
+| POST   | /api/v1/auth/users                          | Create an account (steward)                           |
+| PATCH  | /api/v1/auth/users/:id                      | Change a role (steward)                               |
 | GET    | /api/v1/metrics                             | Catalogue search, filters and pagination              |
 | GET    | /api/v1/metrics/summary                     | Full-catalogue totals by state, type, tier and domain |
 | POST   | /api/v1/metrics                             | Create a DRAFT definition                             |

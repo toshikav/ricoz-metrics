@@ -10,6 +10,13 @@ import type {
   Validation,
   Version,
 } from '../types';
+export type Role = 'consumer' | 'engineer' | 'steward';
+export interface Account {
+  id: string;
+  email: string;
+  name: string;
+  role: Role;
+}
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -27,6 +34,7 @@ export async function request<T>(path: string, options: RequestInit = {}): Promi
   try {
     const response = await fetch(base + path, {
       ...options,
+      credentials: 'include',
       headers: { 'Content-Type': 'application/json', ...options.headers },
       signal: controller.signal,
     });
@@ -74,6 +82,24 @@ const analysisPath = (id: string, action: string) =>
 export const api = {
   health: () =>
     request<{ status: string; database: string; version: string; access: string }>('/api/health'),
+  status: () => request<{ success: boolean; data: { setupRequired: boolean } }>('/api/v1/auth/status'),
+  me: () =>
+    request<{ success: boolean; data: { id: string; email: string; name: string; role: Role } }>(
+      '/api/v1/auth/me',
+    ),
+  login: (email: string, password: string) =>
+    request<{ success: boolean; data: Account }>('/api/v1/auth/login', post({ email, password })),
+  setup: (body: { email: string; password: string; name: string }) =>
+    request<{ success: boolean; data: Account }>('/api/v1/auth/setup', post(body)),
+  logout: () => request('/api/v1/auth/logout', { method: 'POST' }),
+  users: () => request<{ success: boolean; data: Account[] }>('/api/v1/auth/users'),
+  addUser: (body: { email: string; name: string; password: string; role: Role }) =>
+    request<{ success: boolean; data: Account }>('/api/v1/auth/users', post(body)),
+  setRole: (id: string, role: Role) =>
+    request<{ success: boolean; data: Account }>('/api/v1/auth/users/' + encodeURIComponent(id), {
+      method: 'PATCH',
+      body: JSON.stringify({ role }),
+    }),
   list: (filters: Record<string, string | number> = {}) =>
     request<Page<Metric>>('/api/v1/metrics' + query(filters)),
   summary: () => request<One<Summary>>('/api/v1/metrics/summary'),
@@ -81,12 +107,12 @@ export const api = {
   create: (body: Definition) => request<Saved>('/api/v1/metrics', post(body)),
   update: (
     id: string,
-    body: Definition & { updated_by: string; expected_version: number; changes_summary: string },
+    body: Definition & { expected_version: number; changes_summary: string },
   ) => request<Saved>(metricPath(id), { ...post(body), method: 'PUT' }),
-  remove: (id: string, deleted_by: string, expected_version: number) =>
+  remove: (id: string, expected_version: number) =>
     request(metricPath(id), {
       method: 'DELETE',
-      body: JSON.stringify({ deleted_by, expected_version }),
+      body: JSON.stringify({ expected_version }),
     }),
   validate: (body: Definition & { metric_id?: string }) =>
     request<One<Validation>>('/api/v1/analysis/validate-metric', post(body)),
